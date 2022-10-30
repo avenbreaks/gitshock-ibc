@@ -45048,6 +45048,42 @@ paths:
           format: uint64
       tags:
         - Query
+  /neware/claims/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: NewareClaimsParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                type: object
+                description: Params defines the parameters for the module.
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
   /neware/dex/params:
     get:
       summary: Parameters queries the parameters of the module.
@@ -75113,6 +75149,16 @@ definitions:
     description: |-
       Version defines the versioning scheme used to negotiate the IBC verison in
       the connection handshake.
+  neware.claims.Params:
+    type: object
+    description: Params defines the parameters for the module.
+  neware.claims.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        type: object
+        description: Params defines the parameters for the module.
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
   neware.dex.Params:
     type: object
     description: Params defines the parameters for the module.
