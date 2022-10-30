@@ -1,0 +1,14 @@
+syntax = "proto3";
+package neware.neware;
+
+import "gogoproto/gogo.proto";
+import "neware/neware/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "neware/x/neware/types";
+
+// GenesisState defines the neware module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}
