@@ -110,6 +110,9 @@ import (
 	dexmodule "neware/x/dex"
 	dexmodulekeeper "neware/x/dex/keeper"
 	dexmoduletypes "neware/x/dex/types"
+	incentivesmodule "neware/x/incentives"
+	incentivesmodulekeeper "neware/x/incentives/keeper"
+	incentivesmoduletypes "neware/x/incentives/types"
 	newaremodule "neware/x/neware"
 	newaremodulekeeper "neware/x/neware/keeper"
 	newaremoduletypes "neware/x/neware/types"
@@ -174,6 +177,7 @@ var (
 		newaremodule.AppModuleBasic{},
 		dexmodule.AppModuleBasic{},
 		claimsmodule.AppModuleBasic{},
+		incentivesmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -247,11 +251,13 @@ type App struct {
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
 
-	NewareKeeper       newaremodulekeeper.Keeper
-	ScopedDexKeeper    capabilitykeeper.ScopedKeeper
-	DexKeeper          dexmodulekeeper.Keeper
-	ScopedClaimsKeeper capabilitykeeper.ScopedKeeper
-	ClaimsKeeper       claimsmodulekeeper.Keeper
+	NewareKeeper           newaremodulekeeper.Keeper
+	ScopedDexKeeper        capabilitykeeper.ScopedKeeper
+	DexKeeper              dexmodulekeeper.Keeper
+	ScopedClaimsKeeper     capabilitykeeper.ScopedKeeper
+	ClaimsKeeper           claimsmodulekeeper.Keeper
+	ScopedIncentivesKeeper capabilitykeeper.ScopedKeeper
+	IncentivesKeeper       incentivesmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -299,6 +305,7 @@ func New(
 		newaremoduletypes.StoreKey,
 		dexmoduletypes.StoreKey,
 		claimsmoduletypes.StoreKey,
+		incentivesmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -552,6 +559,20 @@ func New(
 	claimsModule := claimsmodule.NewAppModule(appCodec, app.ClaimsKeeper, app.AccountKeeper, app.BankKeeper)
 
 	claimsIBCModule := claimsmodule.NewIBCModule(app.ClaimsKeeper)
+	scopedIncentivesKeeper := app.CapabilityKeeper.ScopeToModule(incentivesmoduletypes.ModuleName)
+	app.ScopedIncentivesKeeper = scopedIncentivesKeeper
+	app.IncentivesKeeper = *incentivesmodulekeeper.NewKeeper(
+		appCodec,
+		keys[incentivesmoduletypes.StoreKey],
+		keys[incentivesmoduletypes.MemStoreKey],
+		app.GetSubspace(incentivesmoduletypes.ModuleName),
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedIncentivesKeeper,
+	)
+	incentivesModule := incentivesmodule.NewAppModule(appCodec, app.IncentivesKeeper, app.AccountKeeper, app.BankKeeper)
+
+	incentivesIBCModule := incentivesmodule.NewIBCModule(app.IncentivesKeeper)
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// Sealing prevents other modules from creating scoped sub-keepers
@@ -563,6 +584,7 @@ func New(
 		AddRoute(ibctransfertypes.ModuleName, transferIBCModule)
 	ibcRouter.AddRoute(dexmoduletypes.ModuleName, dexIBCModule)
 	ibcRouter.AddRoute(claimsmoduletypes.ModuleName, claimsIBCModule)
+	ibcRouter.AddRoute(incentivesmoduletypes.ModuleName, incentivesIBCModule)
 	// this line is used by starport scaffolding # ibc/app/router
 	app.IBCKeeper.SetRouter(ibcRouter)
 
@@ -602,6 +624,7 @@ func New(
 		newareModule,
 		dexModule,
 		claimsModule,
+		incentivesModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -634,6 +657,7 @@ func New(
 		newaremoduletypes.ModuleName,
 		dexmoduletypes.ModuleName,
 		claimsmoduletypes.ModuleName,
+		incentivesmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -661,6 +685,7 @@ func New(
 		newaremoduletypes.ModuleName,
 		dexmoduletypes.ModuleName,
 		claimsmoduletypes.ModuleName,
+		incentivesmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -693,6 +718,7 @@ func New(
 		newaremoduletypes.ModuleName,
 		dexmoduletypes.ModuleName,
 		claimsmoduletypes.ModuleName,
+		incentivesmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -725,6 +751,7 @@ func New(
 		newareModule,
 		dexModule,
 		claimsModule,
+		incentivesModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -926,6 +953,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(newaremoduletypes.ModuleName)
 	paramsKeeper.Subspace(dexmoduletypes.ModuleName)
 	paramsKeeper.Subspace(claimsmoduletypes.ModuleName)
+	paramsKeeper.Subspace(incentivesmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

@@ -2,12 +2,14 @@
 
 import NewareClaims from './neware.claims'
 import NewareDex from './neware.dex'
+import NewareIncentives from './neware.incentives'
 import NewareNeware from './neware.neware'
 
 
 export default { 
   NewareClaims: load(NewareClaims, 'neware.claims'),
   NewareDex: load(NewareDex, 'neware.dex'),
+  NewareIncentives: load(NewareIncentives, 'neware.incentives'),
   NewareNeware: load(NewareNeware, 'neware.neware'),
   
 }

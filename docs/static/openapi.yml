@@ -45120,6 +45120,42 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
+  /neware/incentives/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: NewareIncentivesParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                type: object
+                description: Params defines the parameters for the module.
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
   /neware/neware/params:
     get:
       summary: Parameters queries the parameters of the module.
@@ -75163,6 +75199,16 @@ definitions:
     type: object
     description: Params defines the parameters for the module.
   neware.dex.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        type: object
+        description: Params defines the parameters for the module.
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
+  neware.incentives.Params:
+    type: object
+    description: Params defines the parameters for the module.
+  neware.incentives.QueryParamsResponse:
     type: object
     properties:
       params:
