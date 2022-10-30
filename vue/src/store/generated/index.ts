@@ -1,9 +1,11 @@
 // THIS FILE IS GENERATED AUTOMATICALLY. DO NOT MODIFY.
 
+import NewareDex from './neware.dex'
 import NewareNeware from './neware.neware'
 
 
 export default { 
+  NewareDex: load(NewareDex, 'neware.dex'),
   NewareNeware: load(NewareNeware, 'neware.neware'),
   
 }
