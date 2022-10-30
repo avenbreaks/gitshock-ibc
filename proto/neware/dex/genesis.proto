@@ -3,6 +3,7 @@ package neware.dex;
 
 import "gogoproto/gogo.proto";
 import "neware/dex/params.proto";
+import "neware/dex/pool.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "neware/x/dex/types";
@@ -11,5 +12,7 @@ option go_package = "neware/x/dex/types";
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
   string port_id = 2;
+  repeated Pool poolList = 3 [(gogoproto.nullable) = false];
+  uint64 poolCount = 4;
   // this line is used by starport scaffolding # genesis/proto/state
 }
